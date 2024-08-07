@@ -1,4 +1,26 @@
+# Inventory Management System
+
+This project is an Inventory Management System built with React and Firebase. It allows users to manage inventory items, including adding, removing, and searching for items. The application uses Material-UI for the user interface and Firebase for authentication and database management.
+
+## Features
+
+- Add new inventory items with images
+- Remove inventory items
+- Search for inventory items
+- User authentication with Firebase
+
+## Technologies Used
+
+- React
+- Firebase (Firestore, Authentication)
+- Material-UI
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+### Prerequisites
+
+- Node.js and npm installed on your machine
+- Firebase project set up
 
 ## Getting Started
 
