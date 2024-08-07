@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Box, Stack, Typography, Button, Modal, TextField, Select, MenuItem } from '@mui/material'
+import { Box, Stack, Typography, Button, Modal, TextField, Select, MenuItem, AppBar, Toolbar, IconButton, Grid, Card, CardContent, CardActions } from '@mui/material'
 import { firestore } from '@/firebase'
 import {
   collection,
@@ -12,6 +12,8 @@ import {
   getDoc,
 } from 'firebase/firestore'
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
 
 const style = {
   position: 'absolute',
@@ -19,7 +21,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: 'white',
+  bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
@@ -126,111 +128,102 @@ export default function Home() {
   const paginatedInventory = filteredInventory.slice((page - 1) * 10, page * 10);
 
   return (
-    <Box
-      width="100vw"
-      height="100vh"
-      display={'flex'}
-      justifyContent={'center'}
-      flexDirection={'column'}
-      alignItems={'center'}
-      gap={2}
-    >
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Add Item
+    <Box width="100vw" height="100vh">
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Inventory Management
           </Typography>
-          <Stack width="100%" direction={'row'} spacing={2}>
-            <TextField
-              id="outlined-basic"
-              label="Item"
-              variant="outlined"
-              fullWidth
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-            />
-            <Select
-              value={category}
-              onChange={handleCategoryChange}
-              displayEmpty
-              fullWidth
-            >
-              <MenuItem value="" disabled>Select Category</MenuItem>
-              <MenuItem value="electronics">Electronics</MenuItem>
-              <MenuItem value="furniture">Furniture</MenuItem>
-              <MenuItem value="clothing">Clothing</MenuItem>
-              <MenuItem value="food">Food</MenuItem>
-            </Select>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                addItem(itemName, category)
-                setItemName('')
-                setCategory('')
-                handleClose()
-              }}
-            >
-              Add
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-      <Button variant="contained" onClick={handleOpen}>
-        Add New Item
-      </Button>
-      <TextField
-        label="Search"
-        variant="outlined"
-        fullWidth
-        value={searchTerm}
-        onChange={handleSearchChange}
-      />
-      <Box border={'1px solid #333'}>
-        <Box
-          width="800px"
-          height="100px"
-          bgcolor={'#ADD8E6'}
-          display={'flex'}
-          justifyContent={'center'}
-          alignItems={'center'}
+          <IconButton color="inherit" onClick={handleOpen}>
+            <AddIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" p={2}>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
         >
-          <Typography variant={'h2'} color={'#333'} textAlign={'center'}>
-            Inventory Items
-          </Typography>
-        </Box>
-        <Stack width="800px" height="300px" spacing={2} overflow={'auto'}>
-          {paginatedInventory.map(({name, quantity, category}) => (
-            <Box
-              key={name}
-              width="100%"
-              minHeight="150px"
-              display={'flex'}
-              justifyContent={'space-between'}
-              alignItems={'center'}
-              bgcolor={'#f0f0f0'}
-              paddingX={5}
-            >
-              <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
-                {name.charAt(0).toUpperCase() + name.slice(1)}
-              </Typography>
-              <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
-                Quantity: {quantity}
-              </Typography>
-              <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
-                Category: {category}
-              </Typography>
-              <Button variant="contained" onClick={() => removeItem(name)}>
-                Remove
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Add Item
+            </Typography>
+            <Stack width="100%" direction={'row'} spacing={2}>
+              <TextField
+                id="outlined-basic"
+                label="Item"
+                variant="outlined"
+                fullWidth
+                value={itemName}
+                onChange={(e) => setItemName(e.target.value)}
+              />
+              <Select
+                value={category}
+                onChange={handleCategoryChange}
+                displayEmpty
+                fullWidth
+              >
+                <MenuItem value="" disabled>Select Category</MenuItem>
+                <MenuItem value="electronics">Electronics</MenuItem>
+                <MenuItem value="furniture">Furniture</MenuItem>
+                <MenuItem value="clothing">Clothing</MenuItem>
+                <MenuItem value="food">Food</MenuItem>
+              </Select>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  addItem(itemName, category)
+                  setItemName('')
+                  setCategory('')
+                  handleClose()
+                }}
+              >
+                Add
               </Button>
-            </Box>
+            </Stack>
+          </Box>
+        </Modal>
+        <Box width="100%" display="flex" justifyContent="center" alignItems="center" mb={2}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            fullWidth
+            value={searchTerm}
+            onChange={handleSearchChange}
+            InputProps={{
+              endAdornment: (
+                <IconButton>
+                  <SearchIcon />
+                </IconButton>
+              ),
+            }}
+          />
+        </Box>
+        <Grid container spacing={2} justifyContent="center">
+          {paginatedInventory.map(({ name, quantity, category }) => (
+            <Grid item xs={12} sm={6} md={4} key={name}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" component="div">
+                    {name.charAt(0).toUpperCase() + name.slice(1)}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Quantity: {quantity}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Category: {category}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small" onClick={() => removeItem(name)}>Remove</Button>
+                </CardActions>
+              </Card>
+            </Grid>
           ))}
-        </Stack>
-        <Box display="flex" justifyContent="space-between" padding={2}>
+        </Grid>
+        <Box display="flex" justifyContent="space-between" padding={2} width="100%">
           <Button onClick={handlePreviousPage} disabled={page === 1}>Previous</Button>
           <Button onClick={handleNextPage}>Next</Button>
         </Box>
